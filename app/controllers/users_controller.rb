@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
-  before_action :user_signed_in?, except: [:new, :create, :index]
-  skip_before_action :authenticate_user!, only: [:new, :create, :index]
+  skip_before_action :authenticate_user!, only: [:index]
+  before_action :require_current_user, except: [:index]
 
   # GET /users
   # GET /users.json
@@ -56,6 +56,10 @@ class UsersController < ApplicationController
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
+    unless @user == current_user
+      flash[:notice] = "You are not authorized to do that"
+      redirect_to users_path
+    end
     @user.destroy
     respond_to do |format|
       format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }

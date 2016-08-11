@@ -56,10 +56,7 @@ class UsersController < ApplicationController
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
-    unless @user == current_user
-      flash[:notice] = "You are not authorized to do that"
-      redirect_to users_path
-    end
+    sign_out @user
     @user.destroy
     respond_to do |format|
       format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
